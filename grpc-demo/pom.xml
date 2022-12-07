@@ -11,7 +11,7 @@
     <artifactId>grpc-demo</artifactId>
     <packaging>jar</packaging>
 
-    <name>kafka-stream-tfserving-grpc</name>
+    <name>grpc-demo</name>
     <url>http://maven.apache.org</url>
 
     <properties>

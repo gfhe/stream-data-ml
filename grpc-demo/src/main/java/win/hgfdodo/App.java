@@ -2,7 +2,7 @@ package org.example;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import win.hgfdodo.InceptionInferenceServiceHandler;
+import win.hgfdodo.GrpcDemoServiceHandler;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class App {
   public static void main(String[] args) throws IOException, InterruptedException {
     Server server = ServerBuilder.forPort(8080)
-        .addService(new InceptionInferenceServiceHandler())
+        .addService(new GrpcDemoServiceHandler())
         .maxInboundMessageSize(8*1024*1024) // 1MB
         .build();
     server.start();

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "win.hgfdodo.kafka.stream.tfserving.proto";
+option java_generic_services=true;
+option java_multiple_files=true;
+
+message InceptionRequest{
+  bytes jpeg_encoded = 1;
+}
+
+message InceptionResponse{
+  //可读标签
+  repeated string classes = 3;
+  //与标签一致的概率得分
+  repeated float score = 2;
+}
+
+service InceptionService{
+  rpc Classify(InceptionRequest) returns (InceptionResponse);
+}

@@ -7,7 +7,7 @@ import win.hgfdodo.kafka.stream.tfserving.proto.InceptionRequest;
 import win.hgfdodo.kafka.stream.tfserving.proto.InceptionResponse;
 import win.hgfdodo.kafka.stream.tfserving.proto.InceptionServiceGrpc;
 
-public class InceptionInferenceServiceHandler extends InceptionServiceGrpc.InceptionServiceImplBase {
+public class GrpcDemoServiceHandler extends InceptionServiceGrpc.InceptionServiceImplBase {
 
   @Override
   public void classify(InceptionRequest request, StreamObserver<InceptionResponse> responseObserver) {
