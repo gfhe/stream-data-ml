@@ -1,7 +1,10 @@
-FROM zookeeper as builder
-COPY src /opt/kafka-stream-tfserving/src
-WORKDIR /opt/kafka-stream-tfserving
-RUN mvn generate-srouces && mvn package
+FROM maven:3.8-jdk-8-slim AS builder
+COPY src /opt/src
+COPY pom.xml /opt/pom.xml
+RUN cd /opt ; mvn generate-srouces ; mvn install
 
-FROM builder
-COPY /opt/kafka-stream-tfserving/target/*.jar /app/
+FROM openjdk:8-jre
+RUN apt update && apt install -y kafkacat
+COPY useful.sh /app/
+COPY images /images
+COPY --from=builder /opt/kafka-stream-tfserving/target/*.jar /app/
