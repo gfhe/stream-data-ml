@@ -12,7 +12,7 @@ class TensorflowObjectRecogniserTest {
   private final static String host = "localhost";
   private final static int port = 9000;
 
-  private final static String IMAGE_PATH_NAME_PATTERN = "images/n04596742_%d.JPEG";
+  private final static String IMAGE_PATH_NAME_PATTERN = "/images/n04596742_%d.JPEG";
 
   @Test
   void recongnise() {

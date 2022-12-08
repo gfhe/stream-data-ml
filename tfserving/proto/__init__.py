@@ -1,0 +1,2 @@
+from proto import inception_inference_pb2
+from proto import inception_inference_pb2_grpc

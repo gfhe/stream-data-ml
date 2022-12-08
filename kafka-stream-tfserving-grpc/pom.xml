@@ -89,6 +89,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>0.6.1</version>
                 <configuration>
+                    <protocExecutable></protocExecutable>
                     <!-- 非本地protoc-->
                     <protocArtifact>com.google.protobuf:protoc:3.17.3:exe:${os.detected.classifier}</protocArtifact>
                     <!-- 定义plugin generate java rpc， 使用mvn protobuf:compile-custom编译-->

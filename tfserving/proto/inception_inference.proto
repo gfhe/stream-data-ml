@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto;
+
+message InceptionRequest{
+  bytes jpeg_encoded = 1;
+}
+
+message InceptionResponse{
+  //可读标签
+  repeated string classes = 3;
+  //与标签一致的概率得分
+  repeated float score = 2;
+}
+
+service InceptionService{
+  rpc Classify(InceptionRequest) returns (InceptionResponse);
+}
