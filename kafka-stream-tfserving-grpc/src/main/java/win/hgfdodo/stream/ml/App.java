@@ -33,21 +33,21 @@ public class App {
 
     KStream<String, Object> transformedMessage = stream.mapValues(v -> {
       System.out.println("image path: " + v);
-      TensorflowObjectRecogniser tensorflowObjectRecogniser = null;
+      TensorflowObjectRecogniserOwnGRPC tensorflowObjectRecogniserOwnGRPC = null;
       FileInputStream imgInputSteam = null;
       try {
         imgInputSteam = new FileInputStream(v);
-        tensorflowObjectRecogniser = new TensorflowObjectRecogniser(host, port);
-        List<Map.Entry<String, Double>> result = tensorflowObjectRecogniser.recongnise(imgInputSteam);
+        tensorflowObjectRecogniserOwnGRPC = new TensorflowObjectRecogniserOwnGRPC(host, port);
+        List<Map.Entry<String, Double>> result = tensorflowObjectRecogniserOwnGRPC.recongnise(imgInputSteam);
         String prediction = result.toString();
         return prediction;
 
       } catch (FileNotFoundException e) {
         throw new RuntimeException(e);
       } finally {
-        if (tensorflowObjectRecogniser != null) {
+        if (tensorflowObjectRecogniserOwnGRPC != null) {
           try {
-            tensorflowObjectRecogniser.close();
+            tensorflowObjectRecogniserOwnGRPC.close();
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
