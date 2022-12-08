@@ -1,0 +1,8 @@
+version: "3"
+services:
+    tfserving:
+        build: .
+        environment:
+            - MODEL_NAME=mnist
+        ports:
+            - "8500:8500"

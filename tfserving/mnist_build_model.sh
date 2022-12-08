@@ -1,0 +1,1 @@
+python mnist/mnist_saved_model.py models/mnist
