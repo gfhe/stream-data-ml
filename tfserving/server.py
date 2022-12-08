@@ -8,7 +8,7 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 class TensorflowRecongnizer(inception_inference_pb2_grpc.InceptionServiceServicer):
     def Classify(self, request, context):
-        print("get request!")
+        print(f"get request: {len(request.jpeg_encoded)}")
         return inception_inference_pb2.InceptionResponse(classes=['a','b'], score=[0.3, 0.7])
 
 
