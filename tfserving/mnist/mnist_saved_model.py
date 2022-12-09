@@ -106,8 +106,7 @@ def main(_):
                   classification_inputs
           },
           outputs={
-              tf.compat.v1.saved_model.signature_constants
-              .CLASSIFY_OUTPUT_CLASSES:
+              tf.compat.v1.saved_model.signature_constants.CLASSIFY_OUTPUT_CLASSES:
                   classification_outputs_classes,
               tf.compat.v1.saved_model.signature_constants
               .CLASSIFY_OUTPUT_SCORES:

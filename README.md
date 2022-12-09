@@ -99,3 +99,107 @@ tfserving 源代码地址：[https://github.com/tensorflow/serving](https://gith
 #### 专门编译 tensorflow serving api，作为依赖导入程序
 
 链接：https://github.com/gfhe/tensorflow-serving-api
+
+
+#### tfserving grpc client
+
+参考：https://developer.aliyun.com/article/692123
+
+1. 明确model spec 信息；
+2. 明确模型的 signature信息。如果 savedModel时 包含多个signature，注意区分每个signature的对应输入输出和signature name。
+
+> 本例中以prediction_signature为例子。
+> 
+
+##### 常量说明
+
+常量：
+* `tf.compat.v1.saved_model.signature_constants.CLASSIFY_INPUTS=input`
+* `tf.compat.v1.saved_model.signature_constants.CLASSIFY_OUTPUT_CLASSES=classes`
+* `tf.compat.v1.saved_model.signature_constants.CLASSIFY_OUTPUT_SCORES=scores`
+* `tf.compat.v1.saved_model.signature_constants.CLASSIFY_METHOD_NAME=tensorflow/serving/classify`
+* `tf.compat.v1.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY=serving_default`
+* `tf.compat.v1.saved_model.signature_constants.PREDICT_METHOD_NAME=tensorflow/serving/predict`
+
+##### ModelSpec 信息
+
+ModelSpec 信息包含3个部分： 模型的名字、版本和 SignatureName。
+
+其中：
+1. 模型的名字和版本可以通过部署的路径来确认。例如tfserving的配置的环境变量 `` , 那么模型的名字和版本分别是：
+2. 模型的SignatureName。通过阅读tfserving时，saveModule的代码确认，为`signature_def_map`的 key。
+   如本例，位于：`tfserving/mnist/mnist_saved_model.py`中的代码：
+   ```python
+   signature_def_map={
+          'predict_images':
+              prediction_signature,
+          tf.compat.v1.saved_model.signature_constants
+          .DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+              classification_signature,
+      }
+   ```
+   其中
+   * `predict_images`为 prediction_signature；
+   * `tf.compat.v1.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY=serving_default` 为classification_signature；
+
+##### 输入输出参数信息
+
+如本例，prediction_signature 位于：`tfserving/mnist/mnist_saved_model.py`中的代码：
+```pythhon
+  prediction_signature = (
+      tf.compat.v1.saved_model.signature_def_utils.build_signature_def(
+          inputs={'images': tensor_info_x},
+          outputs={'scores': tensor_info_y},
+          method_name=tf.compat.v1.saved_model.signature_constants
+          .PREDICT_METHOD_NAME))
+```
+   
+可确定：
+* 输入的 参数 为： `images`，输入的tensor由`tensor_info_x`定义，包含了tensor的形状等信息。
+  * `tensor_info_x = tf.compat.v1.saved_model.utils.build_tensor_info(x)`
+* 输出的 参数 为： `scores`，输出的tensor由`tensor_info_y`定义，包含了tensor的形状等信息。
+  * `tensor_info_y = tf.compat.v1.saved_model.utils.build_tensor_info(y)`
+
+##### 输入输出参数tensor信息
+
+参数定义信息：
+
+```python
+serialized_tf_example = tf.compat.v1.placeholder(tf.string, name='tf_example')
+feature_configs = {
+    'x': tf.io.FixedLenFeature(shape=[784], dtype=tf.float32),
+}
+tf_example = tf.io.parse_example(serialized_tf_example, feature_configs)
+x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
+y_ = tf.compat.v1.placeholder('float', shape=[None, 10])
+```
+
+可知：
+* x可批量传入，批次中的每个元素长度为784的float32类型数组。具体的，将`VarLenFeature` 映射为`SparseTensor`, 数组索引结构为`[batch, index]`。batch表示批大小索引，index表示特征数据值的索引
+  * `tf.io.parse_example`表示：以批次中的一个元素的形状，定义批次输入数据的形状。详细说明：
+      ```
+      parse_example_v2(serialized, features, example_names=None, name=None)
+      Parses `Example` protos into a `dict` of tensors.
+      
+      Parses a number of serialized [`Example`](https://www.tensorflow.org/code/tensorflow/core/example/example.proto)
+      protos given in `serialized`. We refer to `serialized` as a batch with
+      `batch_size` many entries of individual `Example` protos.
+      
+      `example_names` may contain descriptive names for the corresponding serialized
+      protos. These may be useful for debugging purposes, but they have no effect on
+      the output. If not `None`, `example_names` must be the same length as
+      `serialized`.
+      
+      This op parses serialized examples into a dictionary mapping keys to `Tensor`
+      `SparseTensor`, and `RaggedTensor` objects. `features` is a dict from keys to
+      `VarLenFeature`, `SparseFeature`, `RaggedFeature`, and `FixedLenFeature`
+      objects. Each `VarLenFeature` and `SparseFeature` is mapped to a
+      `SparseTensor`; each `FixedLenFeature` is mapped to a `Tensor`; and each
+      `RaggedFeature` is mapped to a `RaggedTensor`.
+      
+      Each `VarLenFeature` maps to a `SparseTensor` of the specified type
+      representing a ragged matrix. Its indices are `[batch, index]` where `batch`
+      identifies the example in `serialized`, and `index` is the value's index in
+      the list of values associated with that feature and example.
+      ```
+  * 

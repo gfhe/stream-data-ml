@@ -107,7 +107,7 @@ def _create_rpc_callback(label, result_counter):
   return _callback
 
 
-def do_inference(hostport, work_dir, concurrency, num_tests):
+def do_inference(hostport, work_dir, concurrency=1, num_tests=1, batch_size=1):
   """Tests PredictionService with concurrent requests.
 
   Args:
@@ -130,9 +130,9 @@ def do_inference(hostport, work_dir, concurrency, num_tests):
     request = predict_pb2.PredictRequest()
     request.model_spec.name = 'mnist'
     request.model_spec.signature_name = 'predict_images'
-    image, label = test_data_set.next_batch(1)
+    image, label = test_data_set.next_batch(batch_size)
     request.inputs['images'].CopyFrom(
-        tf.make_tensor_proto(image[0], shape=[1, image[0].size]))
+        tf.make_tensor_proto(image[0], shape=[batch_size, image[0].size]))
     result_counter.throttle()
     result_future = stub.Predict.future(request, 5.0)  # 5 seconds
     result_future.add_done_callback(
@@ -144,9 +144,7 @@ def main(_):
   if FLAGS.num_tests > 10000:
     print('num_tests should not be greater than 10k')
     return
-  if not FLAGS.server:
-    print('please specify server host:port')
-    return
+  FLAGS.server='localhost:8500'
   error_rate = do_inference(FLAGS.server, FLAGS.work_dir,
                             FLAGS.concurrency, FLAGS.num_tests)
   print('\nInference error rate: %s%%' % (error_rate * 100))
