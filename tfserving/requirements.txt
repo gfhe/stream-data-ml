@@ -1,2 +1,3 @@
 tensorflow
 tensorflow_serving_api
+grpcio
