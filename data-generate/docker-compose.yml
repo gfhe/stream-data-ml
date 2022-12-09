@@ -57,6 +57,10 @@ services:
     depends_on:
       - broker
       - schema-registry
+    environment:
+      - TOPIC=mnist
+      - KAFKA_BROKER=broker:9092
+      - MNIST_DIR=/tmp
     command:
       - /bin/sh
       - -c
