@@ -202,4 +202,11 @@ y_ = tf.compat.v1.placeholder('float', shape=[None, 10])
       identifies the example in `serialized`, and `index` is the value's index in
       the list of values associated with that feature and example.
       ```
-  * 
+  * y的形状为`[None, 10]`，表示batch内每条数据的预测结果。
+    * `None` 表示为unknow，为传入的 batch 大小，
+    * `10`表示batch内每条数据，会给出每个类别的预测结果，共10个。
+
+> ⚠️：传入时，指定 TensorProto 的 TensorShapeProto 即表示了 tensor的形状；
+> 在构造Request时，**只能是一维数组**，serving端会自动reshape为TensorShapeProto表示的维度。
+> 
+
