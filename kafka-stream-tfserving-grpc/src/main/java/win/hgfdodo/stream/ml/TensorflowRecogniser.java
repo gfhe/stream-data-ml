@@ -25,19 +25,19 @@ public class TensorflowRecogniser {
 
   private final ManagedChannel channel;
 
-  public TensorflowRecogniser(String servingTarget, String modelName, String signatureName) {
+  public TensorflowRecogniser(String servingTarget, String modelName, String signatureName, long version) {
     this.servingTarget = servingTarget;
     this.modelName = modelName;
     this.signatureName = signatureName;
-    this.channel = ManagedChannelBuilder.forTarget(servingTarget)
+    this.channel = ManagedChannelBuilder.forTarget(this.servingTarget)
         // Channels are secure by default (via SSL/TLS). For the example we disable TLS to
         // avoid needing certificates.
         .usePlaintext().build();
 
     modelSpec = Model.ModelSpec.newBuilder()
-        .setName("mnist")
-        .setSignatureName("predict_images")
-        .setVersion(Int64Value.newBuilder().setValue(0L))
+        .setName(this.modelName)
+        .setSignatureName(this.signatureName)
+        .setVersion(Int64Value.newBuilder().setValue(version))
         .build();
   }
 
