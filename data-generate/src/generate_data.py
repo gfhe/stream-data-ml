@@ -21,7 +21,7 @@ def on_delivery(err, decode_message, original_message):
         print(f"❌: {err}")
 
 
-def produce(topic, num_test=1, batch_size=3):
+def produce(topic, num_test=1, batch_size=1):
     """
     生成数据到kafka， key为label的_ 拼接。
     :param topic:
