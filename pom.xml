@@ -12,7 +12,7 @@
 
   <modules>
     <module>grpc-demo</module>
-    <module>kafka-stream-tfserving-grpc</module>
+    <module>java-tfserving-grpc</module>
   </modules>
 
   <properties>
