@@ -41,7 +41,8 @@ public class TensorflowRecogniser {
         .build();
   }
 
-  public void classify(int batchSize) {
+  public void classify() {
+    int batchSize = 1;
     // 输入tensor的维度信息
     TensorShapeProto tensorShape = TensorShapeProto.newBuilder()
         .addDim(TensorShapeProto.Dim.newBuilder().setSize(batchSize).build())

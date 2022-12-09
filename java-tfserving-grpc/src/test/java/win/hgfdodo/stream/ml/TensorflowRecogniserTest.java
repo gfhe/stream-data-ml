@@ -16,7 +16,7 @@ class TensorflowRecogniserTest {
   @Test
   void classify() throws IOException {
     TensorflowRecogniser recogniser = new TensorflowRecogniser("localhost:9000", "mnist", "predict_images", 1L);
-    recogniser.classify(1);
+    recogniser.classify();
   }
 
   @Test
