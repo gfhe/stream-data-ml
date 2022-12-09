@@ -2,10 +2,12 @@ from confluent_kafka import Producer
 
 import mnist_input_data
 import os
-
+import random
+from time import sleep
 
 def getenv_or_default(key, default_val):
     val = os.getenv(key)
+    print(f"📢 env {key}={val}")
     return val if val is not None else default_val
 
 
@@ -16,10 +18,12 @@ producer = Producer({"bootstrap.servers": bootstrap_servers})
 test_data_set = mnist_input_data.read_data_sets(work_dir).test
 
 
-def on_delivery(err, decode_message, original_message):
+def on_delivery(err, msg):
     if err is not None:
         print(f"❌: {err}")
 
+def random_seconds():
+    return random.randint(10,1000)/1000.0
 
 def produce(topic, num_test=1, batch_size=1):
     """
@@ -34,12 +38,13 @@ def produce(topic, num_test=1, batch_size=1):
         key = labels.tobytes()
         val = images.tobytes()
         producer.produce(topic, value=val, key=key, on_delivery=on_delivery)
+        sleep(random_seconds)
 
     producer.flush()
 
 
 if __name__ == "__main__":
-    topic = os.getenv("TOPIC")
+    topic = getenv_or_default('TOPIC', "mnist")
     if topic is None:
         print("destination topic is none!")
     else:
